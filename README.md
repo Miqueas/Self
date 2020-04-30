@@ -53,10 +53,20 @@ Ecls también soporta herencia, así que, siguiendo el ejemplo anterior, puedes 
 Class("Camaro", {
   model = "Camaro",
   maker = "Chevrolet",
-  state = 'off'
+  status = "off"
+
+  on = function (self)
+    self.status = "on"
+    print(("The %s is ready for run!"):format(self.model))
+  end,
+
+  off = function (self)
+    self.status = "off"
+    print(("Time to sleep..."))
+  end,
 
   run = function (self)
-    if self.status then
+    if self.status == "off" then
       error("The Camaro is off! First, turn on now.")
     else
       print("Oh boi, this Camaro is very fassssst!")
