@@ -37,7 +37,7 @@ Class("Car", {
   end,
 
   run = function (self)
-    print("So FASSSSSTT!!!")
+    print("Running...")
   end
 })
 
@@ -50,5 +50,40 @@ mustang:off()
 Ecls también soporta herencia, así que, siguiendo el ejemplo anterior, puedes hacer esto:
 
 ```lua
+Class("Camaro", {
+  model = "Camaro",
+  maker = "Chevrolet",
+  state = 'off'
 
+  run = function (self)
+    if self.status then
+      error("The Camaro is off! First, turn on now.")
+    else
+      print("Oh boi, this Camaro is very fassssst!")
+    end
+  end
+}, Car)
+
+local camaro = Camaro()
+camaro:run()
 ```
+
+## `set` y `get`
+
+Cuando creas una clase con ecls, automáticamente un método `set` y `get` son añadidos a ésta.
+Sin embargo, ten en cuenta que son métodos bastante básicos y que podrían no funcionar como
+se espera. Por otro lado, el comportamiento de estos mismos pueden ser modificados en el cuerpo
+de la clase tal cual como:
+
+```lua
+Class("Foo", {
+  -- something...
+
+  set = function (self)
+    -- body
+  end,
+
+  get = function (self)
+    -- body
+  end
+})
