@@ -5,7 +5,7 @@ Ecls es una librería simple para manejo de clases en Lua. Basada en [luaclass](
 
 ## Uso
 
-Simplemente importe la librería en el scope global:
+Simplemente importe la librería en el ámbito global:
 
 ```lua
 require("ecls")
@@ -37,7 +37,7 @@ Class("Car", {
   end,
 
   run = function (self)
-    print("Running...")
+    print("Speeddd!!!")
   end
 })
 
@@ -67,7 +67,7 @@ Class("Camaro", {
 
   run = function (self)
     if self.status == "off" then
-      error("The Camaro is off! First, turn on now.")
+      error("The Camaro is off!")
     else
       print("Oh boi, this Camaro is very fassssst!")
     end
@@ -87,7 +87,8 @@ de la clase tal cual como:
 
 ```lua
 Class("Foo", {
-  -- something...
+  k = "key",
+  v = "val",
 
   set = function (self)
     -- body
@@ -97,3 +98,9 @@ Class("Foo", {
     -- body
   end
 })
+
+local f = Foo()
+local v = f:get('k')
+f:set('v', "some value")
+print(f:get('v'))
+```
