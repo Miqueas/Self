@@ -25,7 +25,6 @@ Class("Car", {
   __init__ = function (self, model, maker)
     self.model = model or "Mustang"
     self.maker = maker or "Ford"
-    return self
   end,
 
   on = function (self)
