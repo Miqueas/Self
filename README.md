@@ -1,6 +1,8 @@
 # Ecls
 ### Easy classes for Lua!
 
+__ADVERTENCIA: esta librería podría no funcionar correctamente__
+
 Ecls es una librería simple para manejo de clases en Lua. Basada en [luaclass](https://github.com/benglard/luaclass)
 
 ## Uso
