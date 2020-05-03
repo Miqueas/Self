@@ -5,24 +5,24 @@ local metamethods = {
   '__call', '__gc', '__newindex', '__mode'
 }
 
-local function rawGet(t, key)
+local function class_raw_get(t, key)
   if t == nil then
     return nil
   else
     local  val = t[key]
     if val == nil then
-      return rawGet(t._parent, key)
+      return class_raw_get(t._parent, key)
     else
       return val
     end
   end
 end
 
-local function newMetatable(t)
+local function construct_metatable(t)
   local meta = {}
 
   for k, m in pairs(metamethods) do
-    meta[m] = rawGet(t, m)
+    meta[m] = class_raw_get(t, m)
   end
 
   return meta
@@ -51,7 +51,7 @@ function Class(name, def, parent)
         ref[k] = v
       end
 
-      setmetatable(ref, newMetatable(ref))
+      setmetatable(ref, construct_metatable(ref))
       def.__init__(ref, ...)
       return ref
     end

@@ -1,8 +1,8 @@
-require 'ecls'
+require("ecls")
 
 local unp = table.unpack or unpack
 
-return Class("Stack", {
+Class("Stack", {
   main = {},
   current = "main",
   stacks = { "main" },
