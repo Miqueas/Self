@@ -1,5 +1,7 @@
-prefix=/usr/share/lua/5.3
+version=5.3
+prefix=/usr/share/lua/$(version)
 module=ecls
 
 install:
+	@echo "Installing in: $(prefix)/$(module)"
 	cp -vR $(module) $(prefix)/$(module)
