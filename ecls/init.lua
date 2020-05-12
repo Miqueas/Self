@@ -5,13 +5,13 @@ local metamethods = {
   '__call', '__gc', '__newindex', '__mode'
 }
 
-local function class_raw_get(t, key)
+local function clsRawGet(t, key)
   if t == nil then
     return nil
   else
     local  val = t[key]
     if val == nil then
-      return class_raw_get(t._parent, key)
+      return clsRawGet(t._parent, key)
     else
       return val
     end
@@ -22,10 +22,15 @@ local function construct_metatable(t)
   local meta = {}
 
   for k, m in pairs(metamethods) do
-    meta[m] = class_raw_get(t, m)
+    meta[m] = clsRawGet(t, m)
   end
 
   return meta
+end
+
+function New(name, ...)
+  local cls = assert(_G[name], ("Class '%s' not exists"):format(name))
+  return cls(...)
 end
 
 function Class(name, def, parent)
@@ -33,29 +38,7 @@ function Class(name, def, parent)
   local parent = parent or {}
   local def = def or {}
 
-  def.__init__ = def.__init__ or parent.__init__ or function (self) end
-
-  setmetatable(def, {
-    __call = function(cls, ...)
-      local ref = {}
-
-      if subcls then
-        for k, v in pairs(parent) do
-          if k ~= ("__init__" or "set" or "get") then
-            ref[k] = v
-          end
-        end
-      end
-
-      for k, v in pairs(cls) do
-        ref[k] = v
-      end
-
-      setmetatable(ref, construct_metatable(ref))
-      def.__init__(ref, ...)
-      return ref
-    end
-  })
+  def.init = def.init or parent.init or function(self) end
 
   def.set = def.set or function (self, k, v)
     assert(self[k], ("Key '%s' not exists."):format(k))
@@ -69,20 +52,29 @@ function Class(name, def, parent)
     return self[k]
   end
 
+  local def__call = {
+    __call = function(cls, ...)
+      local ref = {}
+
+      if subcls then
+        for k, v in pairs(parent) do
+          if k ~= ("init" or "set" or "get") then
+            ref[k] = v
+          end
+        end
+      end
+
+      for k, v in pairs(cls) do
+        ref[k] = v
+      end
+
+      setmetatable(ref, construct_metatable(ref))
+      def.init(ref, ...)
+      return ref
+    end
+  }
+
+  setmetatable(def, def__call)
+
   rawset(_G, name, def)
-end
-
-function yield(...)
-  local arg = {...}
-  if #arg == 1 then coroutine.yield(...)
-  else coroutine.yield(arg)
-  end
-end
-
-function Generator(f)
-  local cor = coroutine.create(f)
-  return function(...)
-    local status, val = coroutine.resume(cor, ...)
-    return val
-  end
 end
