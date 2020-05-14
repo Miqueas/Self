@@ -1,3 +1,11 @@
+------------------------
+-- Easy classes for Lua!
+-- A Lua library for handle classes & OOP
+-- Based on luaclass: https://github.com/benglard/luaclass
+-- @author Miqueas Martinez
+-- @license MIT
+-- @mod ecls
+
 local metamethods = {
   '__index', '__tostring', '__len', '__unm',
   '__add', '__sub', '__mul', '__div', '__mod',
@@ -28,11 +36,21 @@ local function construct_metatable(t)
   return meta
 end
 
+--- "New keyword"
+-- Creates a new instance of the given name class and returns it
+-- @string name Class name
+-- @arg[opt] ... Arguments to be passed to the class (vararg)
+-- @treturn name A new class instance
 function New(name, ...)
   local cls = assert(_G[name], ("Class '%s' not exists"):format(name))
   return cls(...)
 end
 
+--- "Class keyword"
+-- Creates a class using the given table as definition
+-- @string name Class name
+-- @tparam table def Class body definition
+-- @tparam[opt] Class parent A parent class
 function Class(name, def, parent)
   local subcls = parent ~= nil
   local parent = parent or {}
