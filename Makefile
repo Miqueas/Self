@@ -5,3 +5,6 @@ module=ecls
 install:
 	@echo "Installing in: $(prefix)/$(module)"
 	cp -vR $(module) $(prefix)/$(module)
+
+doc:
+	ldoc -c doc.ld .
