@@ -8,3 +8,6 @@ install:
 
 doc:
 	ldoc -c doc.ld .
+
+clean:
+	rm -rf doc/
