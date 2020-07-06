@@ -1,107 +1,75 @@
-# Ecls
-### Easy classes for Lua!
+# Self
 
-__ADVERTENCIA: esta librería podría no funcionar correctamente__
-
-Ecls es una librería simple para manejo de clases en Lua. Basada en [luaclass](https://github.com/benglard/luaclass)
+Una librería simple y compacta para OOP en Lua con soporte para herencia.
 
 ## Uso
 
-Simplemente importe la librería en el ámbito global:
+Self retorna una clase padre llamada "Object", la cual necesitaremos guardar en una variable. Por gustos personales, la guardo en "Class", pero eres libre de hacerlo como desees.
 
 ```lua
-require("ecls")
+local Class = require("ecls")
 ```
 
-## Ejemplos
-
-Cuando Ecls es importado, se retorna la función `Class`, con la cual podrás crear tus clases:
+Hecho eso, ya podemos empezar a crear clases. Para eso, podemos simplemente hacer lo siguiente:
 
 ```lua
-require("ecls")
-
-Class("Car", {
-  model = 'none',
-  maker = 'none',
-
-  __init__ = function (self, model, maker)
-    self.model = model or "Mustang"
-    self.maker = maker or "Ford"
-  end,
-
-  on = function (self)
-    print(("The %s is ready for run!"):format(self.model))
-  end,
-
-  off = function (self)
-    print(("Time to sleep..."))
-  end,
-
-  run = function (self)
-    print("Speeddd!!!")
-  end
-})
-
-local mustang = Car()
-mustang:on()
-mustang:run()
-mustang:off()
+local Point = Class("Point")
 ```
 
-Ecls también soporta herencia, así que, siguiendo el ejemplo anterior, puedes hacer esto:
+Con eso, ya tenemos nuestra clase, sin embargo, es necesario definir un constructor:
 
 ```lua
-Class("Camaro", {
-  model = "Camaro",
-  maker = "Chevrolet",
-  status = "off"
-
-  on = function (self)
-    self.status = "on"
-    print(("The %s is ready for run!"):format(self.model))
-  end,
-
-  off = function (self)
-    self.status = "off"
-    print(("Time to sleep..."))
-  end,
-
-  run = function (self)
-    if self.status == "off" then
-      error("The Camaro is off!")
-    else
-      print("Oh boi, this Camaro is very fassssst!")
-    end
-  end
-}, Car)
-
-local camaro = Camaro()
-camaro:run()
+function Point:new(x, y)
+  self.x = x or 0
+  self.y = y or 0
+end
 ```
 
-## `set` y `get`
-
-Cuando creas una clase con ecls, automáticamente un método `set` y `get` son añadidos a ésta.
-Sin embargo, ten en cuenta que son métodos bastante básicos y que podrían no funcionar como
-se espera. Por otro lado, el comportamiento de estos mismos pueden ser modificados en el cuerpo
-de la clase tal cual como:
+El contructor de clase siempre debe ser `new(...)` o `init(...)`, de lo contrario tendrá un error. Con el constructor ya definido, podemos crear una nueva instancia y empezar a trabajar con ella:
 
 ```lua
-Class("Foo", {
-  k = "key",
-  v = "val",
-
-  set = function (self)
-    -- body
-  end,
-
-  get = function (self)
-    -- body
-  end
-})
-
-local f = Foo()
-local v = f:get('k')
-f:set('v', "some value")
-print(f:get('v'))
+local p = Point(20, 40)
 ```
+
+## Documentación
+
+La clase Object provee solo 4 métodos, los cuales se explican aquí brevemente. Puede ver la carpeta `examples/` para más detales.
+
+#### `create([name, parent, def, G])`
+
+Crea una nueva clase que hereda de Object. `Class(...)` es lo mismo que `Class:create(...)`.
+
+Argumentos (opcionales):
+
+ - (__string__)  `name`   El nombre de la clase, es solo por conveniencia para el método `dump()`, pero también te puede ser de utilidad para identificar sus clases.
+ - (__class__)   `parent` Una clase que será usada como padre/base para la nueva clase.
+ - (__table__)   `def`    La definición de la clase, con todos sus métodos (incluído el constructor).
+ - (__boolean__) `G`      Clase global. En este caso, el primer parámetro se hace obligatorio y
+                      la clase no se retorna, en su lugar, es anexado a `_G` siempre y cuando no
+                      exista una clase del mismo nombre.
+
+#### `uses(...)`
+
+Implementa funciones de otras clases en una nueva clase. Se usa en nuevas clases. Éste método no hace que una clase herede de otra(s).
+
+Argumentos:
+
+ - (__class__) `...` Una cantidad indefinida de clases. Se espera al menos 1 clase.
+
+#### `is(cls)`
+
+Retorna `true` si la instancia es del mismo tipo que (o hereda de) `cls`.
+
+Argumentos:
+
+ - (__class__) `cls` Una clase (duh...)
+
+#### `dump([details, indent])`
+
+Crea una representación aproximada en texto de una clase o una instancia.
+
+Argumentos (opcionales):
+
+ - (__boolean__) `details` Si el método es llamado desde una instancia, use `true` para ver
+                       los detalles de la clase en su lugar.
+ - (__string__)  `indent`
