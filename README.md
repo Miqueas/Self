@@ -1,6 +1,6 @@
 # Self
 
-Una librería simple y compacta para OOP en Lua con soporte para herencia.
+Una librería simple y compacta de OOP para Lua.
 
 ## Uso
 
