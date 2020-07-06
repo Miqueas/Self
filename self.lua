@@ -1,98 +1,123 @@
-------------------------
--- Easy classes for Lua!
--- A Lua library for handle classes & OOP
--- Based on luaclass: https://github.com/benglard/luaclass
--- @author Miqueas Martinez
--- @license MIT
--- @mod ecls
+local unp   = unpack or table.unpack
+local Class = {}
+Class.__index  = Class
+Class.__name   = "Object"
+Class.__parent = { Class }
 
-local metamethods = {
-  '__index', '__tostring', '__len', '__unm',
-  '__add', '__sub', '__mul', '__div', '__mod',
-  '__pow', '__concat', '__eq', '__lt', '__le',
-  '__call', '__gc', '__newindex', '__mode'
-}
+local function dump(t, name, indent)
+  local cart
+  local autoref
 
-local function clsRawGet(t, key)
-  if t == nil then
-    return nil
-  else
-    local  val = t[key]
-    if val == nil then
-      return clsRawGet(t._parent, key)
+  local function isemptytable(t) return next(t) == nil end
+
+  local function basicSerialize (o)
+    local so = tostring(o)
+    if type(o) == "function" then
+      local info = debug.getinfo(o, "S")
+      if info.what == "C" then return string.format("%q", so .. ", C function")
+      else return ("%s, in %d-%d %s"):format(so, info.linedefined, info.lastlinedefined, info.source) end
+    elseif type(o) == "number" or type(o) == "boolean" then return so
+    else return string.format("%q", so) end
+  end
+
+  local function addtocart (value, name, indent, saved, field)
+    indent = indent or ""
+    saved = saved or {}
+    field = field or name
+    cart = cart .. indent .. field
+    if type(value) ~= "table" then cart = cart .. " = " .. basicSerialize(value) .. "\n"
     else
-      return val
-    end
-  end
-end
-
-local function construct_metatable(t)
-  local meta = {}
-
-  for k, m in pairs(metamethods) do
-    meta[m] = clsRawGet(t, m)
-  end
-
-  return meta
-end
-
---- "New keyword"
--- Creates a new instance of the given name class and returns it
--- @string name Class name
--- @arg[opt] ... Arguments to be passed to the class (vararg)
--- @treturn name A new class instance
-function New(name, ...)
-  local cls = assert(_G[name], ("Class '%s' not exists"):format(name))
-  return cls(...)
-end
-
---- "Class keyword"
--- Creates a class using the given table as definition
--- @string name Class name
--- @tparam table def Class body definition
--- @tparam[opt] Class parent A parent class
-function Class(name, def, parent)
-  local subcls = parent ~= nil
-  local parent = parent or {}
-  local def = def or {}
-
-  def.init = def.init or parent.init or function(self) end
-
-  def.set = def.set or function (self, k, v)
-    assert(self[k], ("Key '%s' not exists."):format(k))
-    assert(type(self[k]) ~= "function", ("Key '%s' is a function/method."):format(k))
-    self[k] = v
-  end
-
-  def.get = def.get or function (self, k)
-    assert(self[k], ("Key '%s' not exists."):format(k))
-    assert(type(self[k]) ~= "function", ("Key '%s' is a function/method."):format(k))
-    return self[k]
-  end
-
-  local def__call = {
-    __call = function(cls, ...)
-      local ref = {}
-
-      if subcls then
-        for k, v in pairs(parent) do
-          if k ~= ("init" or "set" or "get") then
-            ref[k] = v
+       if saved[value] then
+          cart = cart .. " = {} -- " .. saved[value] .. " (self reference)\n"
+          autoref = autoref ..  name .. " = " .. saved[value] .. "\n"
+       else
+          saved[value] = name
+          if isemptytable(value) then cart = cart .. " = {}\n"
+          else cart = cart .. " = {\n"
+            for k, v in pairs(value) do
+              k = basicSerialize(k)
+              local fname = string.format("%s[%s]", name, k)
+              field = string.format("[%s]", k)
+              addtocart(v, fname, indent .. "  ", saved, field)
+            end cart = cart .. indent .. "}\n"
           end
-        end
-      end
-
-      for k, v in pairs(cls) do
-        ref[k] = v
-      end
-
-      setmetatable(ref, construct_metatable(ref))
-      def.init(ref, ...)
-      return ref
+       end
     end
-  }
+  end
 
-  setmetatable(def, def__call)
-
-  rawset(_G, name, def)
+  name = name or "__unnamed__"
+  if type(t) ~= "table" then return name .. " = " .. basicSerialize(t) end
+  cart, autoref = "", ""
+  addtocart(t, name, indent)
+  return cart .. autoref
 end
+
+local function err(exp, msg, ...)
+  local msg = msg:format(...)
+  if not (exp) then error(msg, 0) else return exp end
+end
+
+function Class:create(name, parent, def, G)
+  err(type(name) == "string" or type(name) == "nil", "Object.new: bad argument #1, string expected, got %s", type(name))
+  err(type(parent) == "table" or type(parent) == "nil", "Object.new: bad argument #2, class expected, got %s", type(parent))
+  err(type(def) == "table" or type(def) == "nil", "Object.new: bad argument #3, table expected, got %s", type(def))
+  err(type(G) == "boolean" or type(G) == "nil", "Object.new: bad argument #4, boolean expected, got %s", type(G))
+
+  local cls = def or {}
+  cls.__parent = { self }
+
+  if parent then
+    table.insert(cls.__parent, parent)
+    for k, v in pairs(parent) do if not cls[k] then cls[k] = v end end
+    for i, v in ipairs(parent.__parent) do
+      if not (parent.__parent[i] == (self or cls or parent)) then table.insert(cls.__parent, v) end
+    end
+  end
+
+  cls.__index = cls
+  cls.__name  = name or "__AnonymousClass__"
+
+  setmetatable(cls, self)
+  if G then
+    err(name, "Object.new: no name for global class")
+    err(not _G[name], "Object.new: class '%s' already exists", name)
+    rawset(_G, name, cls)
+  else return cls end
+end
+
+function Class:uses(...)
+  err(self.__name ~= "Object", "Object.uses: attempt to modify parent class 'Object'")
+  local va = {...}
+  err(#va >= 1, "Object.uses: one or more classes expected, got %d", #va)
+  for idx, cls in pairs(va) do
+    err(type(va[idx]) == "table", "Object.uses: bad argument #%d, class expected, got %s", idx, type(va[idx]))
+    for k, v in pairs(cls) do if type(v) == "function" and not rawget(self, k) then rawset(self, k, v) end end
+  end
+end
+
+function Class:is(cls)
+  err(type(cls) == "table", "Object.is: bad argument, class expected, got %s", type(cls))
+  for i, v in ipairs(self.__parent) do if self.__parent[i] == cls or self.__name == cls.__name then return true end end
+  return false
+end
+
+function Class:dump(details, indent)
+  err(type(details) == "boolean" or "nil", "Object.dump: bad argument #1, boolean expected, got %s", type(details))
+  err(type(indent) == "string" or "nil", "Object.dump: bad argument #2, string expected, got %s", type(indent))
+  if details then return dump(getmetatable(self), self.__name, indent)
+  else return dump(self, self.__name, indent) end
+end
+
+function Class:__call(...)
+  if self.__name == "Object" then return self:create(...) end
+  local o = setmetatable({}, self)
+  if rawget(self, "new") then o:new(...)
+  elseif rawget(self, "init") then o:init(...)
+  else err(nil, "%s: no constructor defined", o.__name) end
+  return o
+end
+
+function Class:__tostring() return ("Class '%s'"):format(self.__name) end
+setmetatable(Class, Class)
+
+return Class
