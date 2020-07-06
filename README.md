@@ -7,7 +7,7 @@ Una librería simple y compacta de OOP para Lua.
 Self retorna una clase padre llamada "Object", la cual necesitaremos guardar en una variable. Por gustos personales, la guardo en "Class", pero eres libre de hacerlo como desees.
 
 ```lua
-local Class = require("ecls")
+local Class = require("self")
 ```
 
 Hecho eso, ya podemos empezar a crear clases. Para eso, podemos simplemente hacer lo siguiente:
