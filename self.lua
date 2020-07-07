@@ -1,4 +1,6 @@
 local unp   = unpack or table.unpack
+local getmt = getmetatable
+local setmt = setmetatable
 local Class = {}
 Class.__index  = Class
 Class.__name   = "Object"
@@ -77,7 +79,7 @@ function Class:create(name, parent, def, G)
   cls.__index = cls
   cls.__name  = name or "__AnonymousClass__"
 
-  setmetatable(cls, self)
+  setmt(cls, self)
   if G then
     err(name, "Object.new: no name for global class")
     err(not _G[name], "Object.new: class '%s' already exists", name)
@@ -101,16 +103,23 @@ function Class:is(cls)
   return false
 end
 
+function Class:isClass(obj)
+  err(obj and type(obj) == "table", "Object.isClass: bad argument, class expected, got %s", type(obj))
+  if getmt(obj) == self then return true
+  elseif getmt(getmt(obj)) == self then return true
+  else return false end
+end
+
 function Class:dump(details, indent)
   err(type(details) == "boolean" or "nil", "Object.dump: bad argument #1, boolean expected, got %s", type(details))
   err(type(indent) == "string" or "nil", "Object.dump: bad argument #2, string expected, got %s", type(indent))
-  if details then return dump(getmetatable(self), self.__name, indent)
+  if details then return dump(getmt(self), self.__name, indent)
   else return dump(self, self.__name, indent) end
 end
 
 function Class:__call(...)
   if self.__name == "Object" then return self:create(...) end
-  local o = setmetatable({}, self)
+  local o = setmt({}, self)
   if rawget(self, "new") then o:new(...)
   elseif rawget(self, "init") then o:init(...)
   else err(nil, "%s: no constructor defined", o.__name) end
@@ -118,6 +127,6 @@ function Class:__call(...)
 end
 
 function Class:__tostring() return ("Class '%s'"):format(self.__name) end
-setmetatable(Class, Class)
+setmt(Class, Class)
 
 return Class
