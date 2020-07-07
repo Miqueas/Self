@@ -64,6 +64,14 @@ Argumentos:
 
  - (__class__) `cls` Una clase (duh...)
 
+#### `isClass(v)`
+
+Retorna `true` si el argumento recibido es una clase
+
+Argumentos:
+
+ - (__table__) `v` Una tabla. Si recibe un valor diferente, retorna error.
+
 #### `dump([details, indent])`
 
 Crea una representación aproximada en texto de una clase o una instancia.
