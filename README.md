@@ -1,3 +1,5 @@
+¡Hey! ¿Buscas una versión en Español? ¡Revisa [aquí](https://github.com/M1que4s/self/blob/master/README_es.md)!
+
 # Self
 
 A very simple and compact OOP (Object Oriented Programming) library for Lua 5+
