@@ -104,8 +104,8 @@ function Class:is(cls)
 end
 
 function Class:isClass(obj)
-  err(obj and type(obj) == "table", "Object.isClass: bad argument, class expected, got %s", type(obj))
-  if getmt(obj) == self then return true
+  if not obj or type(obj) ~= "table" then return nil
+  elseif getmt(obj) == self then return true
   elseif getmt(getmt(obj)) == self then return true
   else return false end
 end

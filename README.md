@@ -19,7 +19,7 @@ local Point = Class("Point")
 ```
 
 And there you go! There is a class with "Point" as a name saved into a local variable named like so.
-The problem is, We need to make a constructor for it!
+The problem is, we need to make a constructor for it!
 
 ```lua
 function Point:new(x, y)
@@ -28,7 +28,7 @@ function Point:new(x, y)
 end
 ```
 
-The constructor needs to be always `new(...)` or `init(...)`, Otherwise, The program will crash. 
+The constructor needs to be always `new(...)` or `init(...)`, otherwise, the program will crash.
 With our constructor already defined, we can start creating instances and experiment with our creation.
 
 ```lua
@@ -37,7 +37,7 @@ local p = Point(20, 40)
 
 ## Documentation
 
-The father class (the one returned by the library) only contains 4 methods. Go check `examples/`
+The father class (the one returned by the library) only contains 5 methods. Go check `examples/`
 
 #### `create([name, parent, def, G])`
 
@@ -45,7 +45,7 @@ Creates a new class inherited from the father class I already mentioned. `Class(
 
 Arguments (optional):
 
- - (__string__)  `name`   The class name, is used as convenience for the `dump()` method, But it can be very useful to name classes.
+ - (__string__)  `name`   The class name, is used as convenience for the `dump()` method, but it can be very useful to name classes.
  - (__class__)   `parent` A parent class that our class will be inherited of.
  - (__table__)   `def`    The class definition (including ALL methods).
  - (__boolean__) `G`      If the class should be stored globally, in this case, this function wont return anything
@@ -56,15 +56,23 @@ Implements methods of other classes into your class. This is used in new classes
 
 Arguments:
 
- - (__class__) `...` An undefined amount of classes, At least 1 is expected.
+ - (__class__) `...` An undefined amount of classes, at least 1 is expected.
 
 #### `is(class)`
 
 Returns `true` if your class is (or is inerithed from) `class`
 
-Argumentos:
+Arguments:
 
- - (__class__) `class` a-... a class...
+ - (__class__) `class` a-... a class... but not an instance of class
+
+### `isClass(obj)`
+
+Returns `true` if `obj` is a class.
+
+Arguments:
+
+ - (__table__) `obj` The table that is checked. Returns `nil` otherwise
 
 #### `dump([details, indent])`
 

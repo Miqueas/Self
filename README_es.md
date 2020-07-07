@@ -33,7 +33,7 @@ local p = Point(20, 40)
 
 ## Documentación
 
-La clase Object provee solo 4 métodos, los cuales se explican aquí brevemente. Puede ver la carpeta `examples/` para más detales.
+La clase Object provee solo 5 métodos, los cuales se explican aquí brevemente. Puede ver la carpeta `examples/` para más detalles.
 
 #### `create([name, parent, def, G])`
 
@@ -64,13 +64,13 @@ Argumentos:
 
  - (__class__) `cls` Una clase (duh...)
 
-#### `isClass(v)`
+#### `isClass(obj)`
 
 Retorna `true` si el argumento recibido es una clase
 
 Argumentos:
 
- - (__table__) `v` Una tabla. Si recibe un valor diferente, retorna error.
+ - (__table__) `obj` Una tabla. Si recibe un valor diferente, retorna `nil`.
 
 #### `dump([details, indent])`
 
