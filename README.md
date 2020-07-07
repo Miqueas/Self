@@ -1,22 +1,23 @@
 # Self
 
-Una librería simple y compacta de OOP para Lua.
+A very simple and compact OOP (Object Oriented Programming) library for Lua 5+
 
-## Uso
+## Usage
 
-Self retorna una clase padre llamada "Object", la cual necesitaremos guardar en una variable. Por gustos personales, la guardo en "Class", pero eres libre de hacerlo como desees.
+Self returns a father class named "Object" that we need to store into a variable. You can store it as you please
 
 ```lua
 local Class = require("self")
 ```
 
-Hecho eso, ya podemos empezar a crear clases. Para eso, podemos simplemente hacer lo siguiente:
+Now we are ready to go! To create a class we just do this:
 
 ```lua
 local Point = Class("Point")
 ```
 
-Con eso, ya tenemos nuestra clase, sin embargo, es necesario definir un constructor:
+And there you go! There is a class with "Point" as a name saved into a local variable named like so.
+The problem is, We need to make a constructor for it!
 
 ```lua
 function Point:new(x, y)
@@ -25,51 +26,49 @@ function Point:new(x, y)
 end
 ```
 
-El contructor de clase siempre debe ser `new(...)` o `init(...)`, de lo contrario tendrá un error. Con el constructor ya definido, podemos crear una nueva instancia y empezar a trabajar con ella:
+The constructor needs to be always `new(...)` or `init(...)`, Otherwise, The program will crash. 
+With our constructor already defined, we can start creating instances and experiment with our creation.
 
 ```lua
 local p = Point(20, 40)
 ```
 
-## Documentación
+## Documentation
 
-La clase Object provee solo 4 métodos, los cuales se explican aquí brevemente. Puede ver la carpeta `examples/` para más detales.
+The father class (the one returned by the library) only contains 4 methods. Go check `examples/`
 
 #### `create([name, parent, def, G])`
 
-Crea una nueva clase que hereda de Object. `Class(...)` es lo mismo que `Class:create(...)`.
+Creates a new class inherited from the father class I already mentioned. `Class(...)` is the same as `Class:create(...)`
 
-Argumentos (opcionales):
+Arguments (optional):
 
- - (__string__)  `name`   El nombre de la clase, es solo por conveniencia para el método `dump()`, pero también te puede ser de utilidad para identificar sus clases.
- - (__class__)   `parent` Una clase que será usada como padre/base para la nueva clase.
- - (__table__)   `def`    La definición de la clase, con todos sus métodos (incluído el constructor).
- - (__boolean__) `G`      Clase global. En este caso, el primer parámetro se hace obligatorio y
-                      la clase no se retorna, en su lugar, es anexado a `_G` siempre y cuando no
-                      exista una clase del mismo nombre.
+ - (__string__)  `name`   The class name, is used as convenience for the `dump()` method, But it can be very useful to name classes.
+ - (__class__)   `parent` A parent class that our class will be inherited of.
+ - (__table__)   `def`    The class definition (including ALL methods).
+ - (__boolean__) `G`      If the class should be stored globally, in this case, this function wont return anything
 
 #### `uses(...)`
 
-Implementa funciones de otras clases en una nueva clase. Se usa en nuevas clases. Éste método no hace que una clase herede de otra(s).
+Implements methods of other classes into your class. This is used in new classes. This method wont make your class be inherited from another(s).
+
+Arguments:
+
+ - (__class__) `...` An undefined amount of classes, At least 1 is expected.
+
+#### `is(class)`
+
+Returns `true` if your class is (or is inerithed from) `class`
 
 Argumentos:
 
- - (__class__) `...` Una cantidad indefinida de clases. Se espera al menos 1 clase.
-
-#### `is(cls)`
-
-Retorna `true` si la instancia es del mismo tipo que (o hereda de) `cls`.
-
-Argumentos:
-
- - (__class__) `cls` Una clase (duh...)
+ - (__class__) `class` a-... a class...
 
 #### `dump([details, indent])`
 
-Crea una representación aproximada en texto de una clase o una instancia.
+Creates an estimate aproximation of all the data inside your class.
 
-Argumentos (opcionales):
+Arguments (optional):
 
- - (__boolean__) `details` Si el método es llamado desde una instancia, use `true` para ver
-                       los detalles de la clase en su lugar.
+ - (__boolean__) `details` If this method is called from an instance, use this to show the CLASS data instead
  - (__string__)  `indent`
