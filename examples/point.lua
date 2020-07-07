@@ -18,9 +18,8 @@ Class("Point", nil, {
 }, true)
 
 Class("Rect", Point, {
-  new = function (self, pos, w, h)
-    self.x = pos.x
-    self.y = pos.y
+  new = function (self, x, y, w, h)
+    Point.new(self, x, y)
     self.w = w or 0
     self.h = h or 0
   end,
@@ -37,11 +36,8 @@ Class("Rect", Point, {
 }, true)
 
 Class("Rombo", Rect, {
-  new = function (self, rect, r)
-    self.x = rect.x
-    self.y = rect.y
-    self.w = rect.w
-    self.h = rect.h
+  new = function (self, x, y, w, h, r)
+    Rect.new(self, x, y, w, h)
     self.r = r or 180
   end,
 
@@ -52,8 +48,8 @@ Class("Rombo", Rect, {
 }, true)
 
 local p  = Point(10, 20)
-local re = Rect(p, 400, 400)
-local ro = Rombo(re)
+local re = Rect(p.x, p.y, 400, 400)
+local ro = Rombo(re.x, re.y, re.w, re.h)
 
 print(p:dump())
 print(re:dump())
