@@ -25,7 +25,7 @@ function Point:new(x, y)
 end
 ```
 
-El contructor de clase siempre debe ser `new(...)` o `init(...)`, de lo contrario tendrá un error. Con el constructor ya definido, podemos crear una nueva instancia y empezar a trabajar con ella:
+El contructor de clase siempre debe ser `new(...)` o `init(...)`, de lo contrario lanzará un error. Con el constructor ya definido, podemos crear una nueva instancia y empezar a trabajar con ella:
 
 ```lua
 local p = Point(20, 40)
@@ -37,15 +37,15 @@ La clase Object provee solo 5 métodos, los cuales se explican aquí brevemente.
 
 #### `create([name, parent, def, G])`
 
-Crea una nueva clase que hereda de Object. `Class(...)` es lo mismo que `Class:create(...)`.
+Crea una nueva clase que hereda de Object. `Class(...)` hace lo mismo que `Class:create(...)`.
 
 Argumentos (opcionales):
 
- - (__string__)  `name`   El nombre de la clase, es solo por conveniencia para el método `dump()`, pero también te puede ser de utilidad para identificar sus clases.
+ - (__string__)  `name`   El nombre de la clase, es solo por conveniencia para el método `dump()`, pero también te puede ser de utilidad para identificar una clase.
  - (__class__)   `parent` Una clase que será usada como padre/base para la nueva clase.
  - (__table__)   `def`    La definición de la clase, con todos sus métodos (incluído el constructor).
  - (__boolean__) `G`      Clase global. En este caso, el primer parámetro se hace obligatorio y
-                      la clase no se retorna, en su lugar, es anexado a `_G` siempre y cuando no
+                      la clase no se retorna, en su lugar, es definido globalmmente siempre y cuando no
                       exista una clase del mismo nombre.
 
 #### `uses(...)`
