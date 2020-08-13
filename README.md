@@ -19,7 +19,7 @@ local Point = Class("Point")
 ```
 
 And there you go! There is a class with "Point" as a name saved into a local variable named like so.
-The problem is, we need to make a constructor for it!
+The problem is that it doesnt works because it has no constructor!
 
 ```lua
 function Point:new(x, y)
@@ -46,9 +46,9 @@ Creates a new class inherited from the father class I already mentioned. `Class(
 Arguments (optional):
 
  - (__string__)  `name`   The class name, is used as convenience for the `dump()` method, but it can be very useful to name classes.
- - (__class__)   `parent` A parent class that our class will be inherited of.
+ - (__class__)   `parent` A parent class that our class will be inherited from.
  - (__table__)   `def`    The class definition (including ALL methods).
- - (__boolean__) `G`      If the class should be stored globally, in this case, this function wont return anything
+ - (__boolean__) `G`      If the class should be stored globally, in this case, this function wont return anything.
 
 #### `uses(...)`
 
