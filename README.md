@@ -81,4 +81,4 @@ Creates an estimate aproximation of all the data inside your class.
 Arguments (optional):
 
  - (__boolean__) `details` If this method is called from an instance, use this to show the CLASS data instead
- - (__string__)  `indent`
+ - (__string__)  `indent` One or more characters shown at the beginning of each line.
