@@ -80,4 +80,4 @@ Argumentos (opcionales):
 
  - (__boolean__) `details` Si el método es llamado desde una instancia, use `true` para ver
                        los detalles de la clase en su lugar.
- - (__string__)  `indent`
+ - (__string__)  `indent` Uno o más carácteres que se muestran al principio de cada línea.
