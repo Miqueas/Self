@@ -1,4 +1,4 @@
-local Class   = require("self")
+local Class   = require("Self")
 local unp     = table.unpack or unpack
 local Stack   = Class("Stack")
 Stack.S       = { main = {} } -- Store all stacks
@@ -84,3 +84,5 @@ function Stack:destroy(name)
   for i, v in ipairs(self.stacks) do if v == name then table.remove(self.stacks, i) end end
   self.S[name] = nil
 end
+
+return Stack
