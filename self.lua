@@ -6,6 +6,7 @@ Class.__index  = Class
 Class.__name   = "Object"
 Class.__parent = { Class }
 
+-- dump method. This code is from: http://lua-users.org/wiki/TableSerialization.
 local function dump(t, name, indent)
   local cart
   local autoref
@@ -54,11 +55,13 @@ local function dump(t, name, indent)
   return cart .. autoref
 end
 
+-- A simple custom version of assert()
 local function err(exp, msg, ...)
   local msg = msg:format(...)
   if not (exp) then error(msg, 0) else return exp end
 end
 
+-- create a new class, this also works as "Class" constructor
 function Class:create(name, parent, def, G)
   err(type(name) == "string" or type(name) == "nil", "Object.new: bad argument #1, string expected, got %s", type(name))
   err(type(parent) == "table" or type(parent) == "nil", "Object.new: bad argument #2, class expected, got %s", type(parent))
@@ -87,6 +90,7 @@ function Class:create(name, parent, def, G)
   else return cls end
 end
 
+-- "import" methods from other classes
 function Class:uses(...)
   err(self.__name ~= "Object", "Object.uses: attempt to modify parent class 'Object'")
   local va = {...}
@@ -97,12 +101,14 @@ function Class:uses(...)
   end
 end
 
+-- check if the instance is the same type of the given class
 function Class:is(cls)
   err(type(cls) == "table", "Object.is: bad argument, class expected, got %s", type(cls))
   for i, v in ipairs(self.__parent) do if self.__parent[i] == cls or self.__name == cls.__name then return true end end
   return false
 end
 
+-- check if "obj" (a table) is a class
 function Class:isClass(obj)
   if not obj or type(obj) ~= "table" then return nil
   elseif getmt(obj) == self then return true
@@ -110,6 +116,7 @@ function Class:isClass(obj)
   else return false end
 end
 
+-- returns an aproximated representation of the class in text
 function Class:dump(details, indent)
   err(type(details) == "boolean" or "nil", "Object.dump: bad argument #1, boolean expected, got %s", type(details))
   err(type(indent) == "string" or "nil", "Object.dump: bad argument #2, string expected, got %s", type(indent))
@@ -117,6 +124,7 @@ function Class:dump(details, indent)
   else return dump(self, self.__name, indent) end
 end
 
+-- __call metamethod
 function Class:__call(...)
   if self.__name == "Object" then return self:create(...) end
   local o = setmt({}, self)
@@ -126,6 +134,7 @@ function Class:__call(...)
   return o
 end
 
+-- __tostring metamethod
 function Class:__tostring() return ("Class '%s'"):format(self.__name) end
 setmt(Class, Class)
 

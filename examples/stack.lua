@@ -1,125 +1,86 @@
-local Class = require("self")
-local unp = table.unpack or unpack
+local Class   = require("self")
+local unp     = table.unpack or unpack
+local Stack   = Class("Stack")
+Stack.S       = { main = {} } -- Store all stacks
+Stack.current = "main"        -- Current workspace name
+Stack.stacks  = { "main" }    -- Control list of all registered stacks
 
-local Stack = Class("Stack", nil, {
-  _S = { main = {} },  -- Tabla donde se almacenan las pilas
-  current = "main",    -- "Espacio de nombres" en el que se trabaja actualmente
-  stacks = { "main" }, -- Lista de control de pilas
-
-  -- Constructor
-  new = function (self, ...)
-    local args = {...}
-
-    if #args > 0 then
-      for _, v in ipairs(args) do
-        if type(v) == "string" then
-          self._S[v] = {}
-          table.insert(self.stacks, v)
-        end
+--[[ new: (Constructor) creates a new instance of this Stack class
+  Arguments:
+    (string) ... One or more names for stacks
+]]
+function Stack:new(...)
+  local args = {...}
+  if #args > 0 then
+    for _, v in ipairs(args) do
+      if type(v) == "string" then
+        self.S[v] = {}
+        table.insert(self.stacks, v)
       end
     end
-  end,
-
-  -- push: coloca uno o más objetos en la pila
-  push = function (self, ...)
-    local args = {...}
-    local current = self._S[self.current]
-
-    if #args > 0 then
-      for _, v in ipairs(args) do
-        table.insert(current, v)
-      end
-    end
-  end,
-
-  -- pop: retira un objeto en la posición 'pos' o el último en la
-  --      pila si no se especifica 'pos'
-  pop = function (self, pos)
-    local current = self._S[self.current]
-    table.remove(current, pos)
-  end,
-
-  -- get: similar a pop, pero no retira elementos, en su lugar,
-  --      retorna valores
-  get = function (self, pos)
-    local current = self._S[self.current]
-    local last = #current
-    return current[pos] or current[last]
-  end,
-
-  -- switch: cambia de espacio de nombres
-  switch = function (self, name)
-    assert(self._S[name], ("Stack '%s' not exists"):format(name))
-    self.current = name
-  end,
-
-  -- name: retorna el (espacio de) nombre(s) de la pila actual
-  name = function (self) return self.current end,
-  -- len: retorna la cantidad de items en la pila
-  len = function (self) return #self._S[self.current] end,
-  -- unpack: wrapper para "table.unpack" o "unpack" (según la versión de Lua)
-  unpack = function (self) return unp(self._S[self.current]) end,
-
-  -- new: crea (y agrega) una nueva pila
-  create = function (self, name)
-    self._S[name] = {}
-    table.insert(self.stacks, name)
-  end,
-
-  -- TODO: index: returns the (key or table) index of the
-  --              given argument
-  index = function (self, val)
-  end,
-
-  -- clear: elimina todos los items dentro de una pila
-  clear = function (self, name)
-    assert(self._S[name], ("Stack '%s' not exists"):format(name))
-    self._S[name] = {}
-  end,
-
-  -- TODO: destroy: delete an stack from the given name
-  destroy = function (self, name)
-  end,
-
-  -- list: retorna los nombres de todas las pilas
-  list = function (self) return unp(self.stacks) end,
-  -- __len (metamethod): llama al método "len" cuando el operador # es
-  --                     usado
-  __len = function (self) return self:len() end
-})
-
-local things = Stack("animales", "personas")
-local animales = {
-  "perro",
-  "gato",
-  "elefante"
-}
-
-local personas = {
-  "juan",
-  "maría",
-  "pedro"
-}
-
-print("Stacks:")
-print(things:list())
-print()
-
-things:switch("animales")
-
-for _, v in ipairs(animales) do
-  things:push(v)
+  end
 end
 
-print("Todos los animales:")
-print(things:unpack())
-print()
-
-things:switch("personas")
-
-for _, v in ipairs(personas) do
-  things:push(v)
+--[[ push: append one or more things to an stack
+  Arguments:
+    (any) ... One or more of A N Y T H I N G
+]]
+function Stack:push(...)
+  local args = {...}
+  if #args > 0 then for _, v in ipairs(args) do table.insert(self.S[self.current], v) end end
 end
 
-print("Todas las personas:")
-print(things:unpack())
+--[[ pop: removes anything from the given position of the stack. If no argument, then removes the last value added
+  Arguments (optional):
+    (number) pos The index of the value that you want to remove
+]]
+function Stack:pop(pos) table.remove(self.S[self.current], pos) end
+
+-- get: like 'pop', but return a value instead of remove
+function Stack:get(pos) return self.S[self.current][pos] or self.S[self.current][#self.S[self.current]] end
+
+--[[ switch: switch between workspaces names
+  Arguments:
+    (string) name Name of the workspace that you want to switch
+]]
+function Stack:switch(name)
+  assert(self.S[name], ("Stack '%s' not exists"):format(name))
+  self.current = name
+end
+
+-- name: returns the name of the current workspace
+function Stack:name() return self.current end
+-- len: returns the count of items in the current workspace
+function Stack:len() return #self.S[self.current] end
+-- unp: wrapper for "unpack" or "table.unpack"
+function Stack:unpack() return unp(self.S[self.current]) end
+
+--[[ create: creates (and adds) a new stack in the current instance
+  Arguments:
+    (string) name Name of the stack
+]]
+function Stack:create(name)
+  self.S[name] = {}
+  table.insert(self.stacks, name)
+end
+
+--[[ clear: removes all values on a stack and leaves it empty. If no stack name given, then use the current stack
+]]
+function Stack:clear(name)
+  local name = name or self.current
+  assert(self.S[name], ("Stack '%s' not exists"):format(name))
+  self.S[name] = {}
+end
+
+-- list: returns the names of all stacks
+function Stack:list() return unp(self.stacks) end
+-- index: returns the index in the current stack of the given value
+function Stack:index(val) for i, v in ipairs(self.S[self.current]) do if v == val then return i end end end
+
+-- destroy: set to 'nil' (destroy) an stack using the given stack name or the current stack if isn't 'main'
+function Stack:destroy(name)
+  local name = name or self.current
+  assert(name ~= "main", "'main' stack can't be destroyed")
+  for i, v in ipairs(self.stacks) do if v == name then table.remove(self.stacks, i) end end
+  self.S[name] = nil
+end
