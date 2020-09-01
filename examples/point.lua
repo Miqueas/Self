@@ -42,7 +42,7 @@ Class("Rombo", Rect, {
   end,
 
   setR = function (self, r)
-    assert(r, "No value for fotation")
+    assert(r, "No value for rotation")
     self.r = r
   end
 }, true)

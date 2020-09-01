@@ -1,4 +1,4 @@
-¡Hey! ¿Buscas una versión en Español? ¡Revisa [aquí](https://github.com/M1que4s/self/blob/master/README_es.md)!
+¡Hey! ¿Buscas una versión en Español? ¡Revisa [aquí](https://github.com/M1que4s/Self/blob/master/README_es.md)!
 
 # Self
 
