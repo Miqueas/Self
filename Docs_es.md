@@ -7,6 +7,7 @@ En este fichero podrás encontrar la documentación de `Self.lua` y `Stack.lua`
 Para empezar a trabajar con Self, es simple como usar `require("Self")` y guardarlo en una variable tal y como se puede ver en el README. Hay 2 formas de crear una clase con Self y en teoría, debería de funcionar igual en ambos casos:
 
   1. Primero declarar y luego definir:
+
     ```lua
     local Class = require("Self")
     local Person = Class("Person")
@@ -19,7 +20,8 @@ Para empezar a trabajar con Self, es simple como usar `require("Self")` y guarda
     -- Otros métodos aquí...
     ```
 
-  2. Declarar y definir al mismo tiempo
+  2. Declarar y definir al mismo tiempo:
+
     ```lua
     local Class = require("Self")
     local Person = Class("Person", nil, {
