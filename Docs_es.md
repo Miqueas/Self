@@ -4,36 +4,34 @@ En este fichero podrás encontrar la documentación de `Self.lua` y `Stack.lua`
 
 ## Self
 
-Para empezar a trabajar con Self, es simple como usar `require("Self")` y guardarlo en una variable tal y como se puede ver en el README. Hay 2 formas de crear una clase con Self y en teoría, debería de funcionar igual en ambos casos, pero puede que realmente no sea así.
+Para empezar a trabajar con Self, es simple como usar `require("Self")` y guardarlo en una variable tal y como se puede ver en el README. Hay 2 formas de crear una clase con Self y en teoría, debería de funcionar igual en ambos casos:
 
-Método 1:
+  1. Primero declarar y luego definir:
+    ```lua
+    local Class = require("Self")
+    local Person = Class("Person")
+    Person.name = "None" -- Una propiedad
 
-```lua
-local Class = require("Self")
-local Person = Class("Person")
-Person.name = "None" -- Una propiedad
+    function Person:new(...) -- Constructor
+      -- ...
+    end
 
-function Person:new(...) -- Constructor
-  -- ...
-end
+    -- Otros métodos aquí...
+    ```
 
--- Otros métodos aquí...
-```
+  2. Declarar y definir al mismo tiempo
+    ```lua
+    local Class = require("Self")
+    local Person = Class("Person", nil, {
+      name = "None",
 
-Método 2:
+      new = function (self, ...)
+        -- ...
+      end
 
-```lua
-local Class = require("Self")
-local Person = Class("Person", nil, {
-  name = "None",
-
-  new = function (self, ...)
-    -- ...
-  end
-
-  -- Otros métodos aquí...
-})
-```
+      -- Otros métodos aquí...
+    })
+    ```
 
 Es una diferencia principalmente estética, pero puede que para algunos sea más cómodo uno u otro.
 
