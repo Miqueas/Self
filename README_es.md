@@ -18,4 +18,4 @@ end
 local p = Point(10, 40) -- Ahora 'p' es una instancia de la clase 'Point'
 ```
 
-Más información [aquí](https://github.com/M1que4s/Self/blob/master/Docs_es.md)
+Lee la documentación [aquí](Docs_es.md)
