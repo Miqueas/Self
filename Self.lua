@@ -1,3 +1,10 @@
+--[[
+  Author: Miqueas Martinez (miqueas2020@yahoo.com)
+  Date: 2020/04/30
+  License: MIT (see it in the repository)
+  Git Repository: https://github.com/M1que4s/Self
+]]
+
 local unp   = unpack or table.unpack
 local getmt = getmetatable
 local setmt = setmetatable
