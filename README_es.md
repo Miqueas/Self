@@ -19,3 +19,7 @@ local p = Point(10, 40) -- Ahora 'p' es una instancia de la clase 'Point'
 ```
 
 Lee la documentación [aquí](Docs_es.md)
+
+---
+
+Self sigue la especificación de [SemVer](https://semver.org/)
