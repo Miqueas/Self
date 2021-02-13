@@ -1,3 +1,5 @@
+[![License][LicenseBadge]][licenseURL]
+
 # Self
 
 Una librería simple y compacta de OOP para Lua.
@@ -23,3 +25,6 @@ Lee la documentación [aquí](Docs_es.md)
 ---
 
 Self sigue la especificación de [SemVer](https://semver.org/)
+
+[LicenseBadge]: https://img.shields.io/badge/Licencia-Zlib-brightgreen?style=for-the-badge
+[LicenseURL]: https://opensource.org/licenses/Zlib
