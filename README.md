@@ -1,3 +1,5 @@
+[![License][LicenseBadge]][licenseURL]
+
 ¡Hey! ¿Buscas una versión en Español? ¡Revisa [aquí](README_es.md)!
 
 # Self
@@ -21,3 +23,6 @@ local p = Point(10, 40) -- Then 'p' is an instance of the class 'Point'
 ```
 
 Read the docs [here](Docs.md)
+
+[LicenseBadge]: https://img.shields.io/badge/License-Zlib-brightgreen?style=for-the-badge
+[LicenseURL]: https://opensource.org/licenses/Zlib
