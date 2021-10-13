@@ -1,7 +1,7 @@
 --[[
   Author: Miqueas Martinez (miqueas2020@yahoo.com)
   Date: 2020/04/30
-  License: MIT (see it in the repository)
+  License: Zlib (see it in the repository)
   Git Repository: https://github.com/M1que4s/Self
 ]]
 
