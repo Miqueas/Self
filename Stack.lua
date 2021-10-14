@@ -6,18 +6,20 @@
 ]]
 
 local Class   = require("Self")
-local unp     = table.unpack or unpack
-local Stack   = Class("Stack")
-Stack.S       = { main = {} } -- Store all stacks
-Stack.current = "main"        -- Current workspace name
-Stack.stacks  = { "main" }    -- Control list of all registered stacks
+local unp     = unpack or table.unpack
+local Stack   = Class {
+  S       = { main = {} }, -- Store all stacks
+  current = "main",        -- Current workspace name
+  stacks  = { "main" }     -- Control list of all registered stacks
+}
 
 --[[ new: (Constructor) creates a new instance of this Stack class
   Arguments:
     (string) ... One or more names for stacks
 ]]
-function Stack:new(...)
+function Stack:__ctor(...)
   local args = {...}
+
   if #args > 0 then
     for _, v in ipairs(args) do
       if type(v) == "string" then
@@ -34,17 +36,32 @@ end
 ]]
 function Stack:push(...)
   local args = {...}
-  if #args > 0 then for _, v in ipairs(args) do table.insert(self.S[self.current], v) end end
+
+  if #args > 0 then
+    for _, v in ipairs(args) do
+      table.insert(self.S[self.current], v)
+    end
+  end
 end
 
 --[[ pop: removes anything from the given position of the stack. If no argument, then removes the last value added
   Arguments (optional):
     (number) pos The index of the value that you want to remove
 ]]
-function Stack:pop(pos) table.remove(self.S[self.current], pos) end
+function Stack:pop(pos)
+  table.remove(self.S[self.current], pos)
+end
 
 -- get: like 'pop', but return a value instead of remove
-function Stack:get(pos) return self.S[self.current][pos] or self.S[self.current][#self.S[self.current]] end
+function Stack:get(pos)
+  local last = self.S[self.current][#self.S[self.current]]
+
+  if pos then
+    return self.S[self.current][pos]
+  end
+
+  return last
+end
 
 --[[ switch: switch between workspaces names
   Arguments:
@@ -82,13 +99,23 @@ end
 -- list: returns the names of all stacks
 function Stack:list() return unp(self.stacks) end
 -- index: returns the index in the current stack of the given value
-function Stack:index(val) for i, v in ipairs(self.S[self.current]) do if v == val then return i end end end
+function Stack:index(val)
+  for i, v in ipairs(self.S[self.current]) do
+    if v == val then
+      return i
+    end
+  end
+end
 
 -- destroy: set to 'nil' (destroy) an stack using the given stack name or the current stack if isn't 'main'
 function Stack:destroy(name)
   local name = name or self.current
   assert(name ~= "main", "'main' stack can't be destroyed")
-  for i, v in ipairs(self.stacks) do if v == name then table.remove(self.stacks, i) end end
+  for i, v in ipairs(self.stacks) do
+    if v == name then
+      table.remove(self.stacks, i)
+    end
+  end
   self.S[name] = nil
 end
 
