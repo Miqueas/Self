@@ -117,6 +117,7 @@ end
 
 -- TODO: write an actually good setter
 
+-- TODO: document about this returned function
 return function (G_New, G_Object)
   opt_arg(1, G_New, "boolean")
   opt_arg(2, G_Object, "boolean")
