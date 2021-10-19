@@ -11,14 +11,12 @@ local setmt = setmetatable
 local get   = rawget
 local set   = rawset
 
--- Parent class for all classes
---- @class Object
-local Object = {}
-local Object_mt = {}
-Object_mt.__index = Object
+--[[ Private stuff ]]
 
---- A simple custom version of `assert()`
---- @param exp any Expression to evaluate
+--- A simple custom version of `assert()` with built-in
+--- `string.format()` support
+--- @generic Expr
+--- @param exp Expr Expression to evaluate
 --- @param msg string Error message to print
 --- @vararg any Additional arguments to format for `msg`
 --- @return any
@@ -32,61 +30,108 @@ local function err(exp, msg, ...)
   return exp
 end
 
+--- Argument type checking function
+--- @generic Any
+--- @generic Type
+--- @param argn number The argument position in function
+--- @param arg_ Any The argument to check
+--- @param expected Type The type expected (`string`)
+local function check_arg(argn, arg_, expected)
+  local argt = type(arg_)
+  local msg = "Bad argument #%d, `%s` expected, got `%s`."
+
+  if argt ~= expected then
+    error(msg:format(argn, expected, argt))
+  end
+end
+
+--- Same as `check_arg()`, except that this don't throw
+--- and error if the argument is `nil`
+--- @generic Any
+--- @generic Type
+--- @param argn number The argument position in function
+--- @param arg_ Any The argument to check
+--- @param expected Type The type expected (`string`)
+local function opt_arg(argn, arg_, expected)
+  local argt = type(arg_)
+  local msg = "Bad argument #%d, `%s` or `nil` expected, got `%s`."
+
+  if argt ~= expected and argt ~= "nil" then
+    error(msg:format(argn, expected, argt))
+  end
+end
+
+--[[ Public stuff ]]
+
+-- Parent class for all classes
+--- @class Object
+local Object = {}
+Object.new = Object.__call
+
 --- Creates a class
---- @vararg table|nil
+--- @param def table
 --- @return table
 function Class(def)
-  local class = setmt(def or {}, Object_mt)
-  --class.__index = class
+  check_arg(1, def, "table")
+
+  local class = setmt(def, Object)
+  class.__index = class
 
   return class
 end
 
--- TODO: e
-function Object:implements(iface_list)
-  err(
-    type(iface_list) == "table",
-    "Bad argument for implements(), `table` expected, got `%s`",
-    type(iface_list)
-  )
+function Object.implements(class, ...)
+  check_arg(1, class, "table")
 
-  if #iface_list > 0 then
-    for index, iface in ipairs(iface_list) do
-      err(
-        type(iface) == "table",
-        "Bad type in `iface_list` at index #%d, `table` expected, got `%s`",
-        index, type(iface)
-      )
+  for iface_index, iface in ipairs({ ... }) do
+    check_arg(iface_index, iface, "table")
 
-      for name, func in pairs(iface) do
-        if type(func) == "function" and not get(self, name) then
-          set(self, name, func)
-        end
+    for name, func in pairs(iface) do
+      if not get(class, name) then
+        set(class, name, func)
       end
     end
   end
 end
 
-function Object_mt.__call(class, ...)
-  err(class ~= Object, "Trying to instantiate base class 'Object'")
-  err(class.__ctor, "This class don't have a constructor", tostring(class))
+function Object.__call(class, ...)
+  check_arg(1, class, "table")
 
   local o = setmt({}, class)
-  o:__ctor(...)
+  o:new(...)
+
   return o
 end
 
-function Object_mt.__index(self, key, val)
-  if get(self, key) then
-    return get(self, key)
-  elseif get(Object, key) then
-    return get(Object, key)
-  else
-    return err(nil, "This class don't have a field named '%s'", key)
+-- Getter
+-- * May need a revision
+function Object.__index(class, key)
+  local cval = get(class, key)
+
+  if cval then
+    return cval
   end
+
+  return get(Object, key)
 end
 
--- Object.new = Object_mt.__call
--- _G.new     = Object_mt.__call
+-- TODO: write an actually good setter
 
-return Class
+return function (G_New, G_Object)
+  opt_arg(1, G_New, "boolean")
+  opt_arg(2, G_Object, "boolean")
+
+  if G_New then
+    if not get(_G, "New") then
+      _G.New = Object.new
+    else
+      print("\n[WARN] Self.lua: `_G` already has field named `New`.\n")
+    end
+  end
+
+  if G_Object then
+    return Class, Object
+  end
+
+  return Class
+end
