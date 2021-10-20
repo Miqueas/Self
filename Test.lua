@@ -12,21 +12,12 @@ end
 local a = Person("A", 34)
 local b = New(Person, "B", 56)
 local c = Object.new(Person, "C", 86)
-print(a.name)
-print(b.name)
-print(c.name)
-print(a.age)
-print(b.age)
-print(c.age)
+
+print(a:is())
+print(b:is(Person))
+print(a:is(Object))
 
 p(a)
 p(b)
 p(c)
-p(Person)
-
-c.error = "a"
-p(c)
-p(c == c)
-p(a)
-p(b)
 p(Person)
