@@ -66,7 +66,6 @@ end
 -- Parent class for all classes
 --- @class Object
 local Object = {}
-Object.new = Object.__call
 
 --- Creates a class
 --- @param def table
@@ -97,6 +96,8 @@ end
 function Object.__call(class, ...)
   check_arg(1, class, "table")
 
+  set(class, "__newindex", Object.__newindex)
+
   local o = setmt({}, class)
   o:new(...)
 
@@ -106,31 +107,38 @@ end
 -- Getter
 -- * May need a revision
 function Object.__index(class, key)
-  local cval = get(class, key)
-
-  if cval then
-    return cval
-  end
-
-  return get(Object, key)
+  return get(class, key) or get(Object, key)
 end
 
--- TODO: write an actually good setter
+function Object.__newindex(class, key, val)
+  local mt = getmt(class)
+  local _val = get(class, key) or get(mt, key)
+  print(class, key, val)
+
+  if mt == Object then
+    set(class, key, val)
+  else
+    err(_val, "instance")
+    set(class, key, val)
+  end
+end
+
+Object.new = Object.__call
 
 -- TODO: document about this returned function
-return function (G_New, G_Object)
-  opt_arg(1, G_New, "boolean")
-  opt_arg(2, G_Object, "boolean")
+return function (g_constructor, g_object)
+  opt_arg(1, g_constructor, "boolean")
+  opt_arg(2, g_object, "boolean")
 
-  if G_New then
-    if not get(_G, "New") then
+  if g_constructor then
+    if not _G.New then
       _G.New = Object.new
     else
       print("\n[WARN] Self.lua: `_G` already has field named `New`.\n")
     end
   end
 
-  if G_Object then
+  if g_object then
     return Class, Object
   end
 
