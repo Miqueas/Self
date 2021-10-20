@@ -24,7 +24,7 @@ local function err(exp, msg, ...)
   local msg = msg:format(...)
 
   if not (exp) then
-    return error(msg, 0)
+    return error(msg)
   end
 
   return exp
@@ -74,13 +74,28 @@ function Class(def)
   check_arg(1, def, "table")
 
   local class = setmt(def, Object)
-  class.__index = class
 
   return class
 end
 
+function Object.is(instance, class)
+  local mt = getmt(instance)
+  
+  if not class then
+    return "Object"
+  end
+
+  return mt == class or getmt(mt) == Object
+end
+
 function Object.implements(class, ...)
   check_arg(1, class, "table")
+
+  -- Prevent using this method from an instance
+  err(
+    getmt(class) == Object,
+    "Trying to call 'implements' method from an instance"
+  )
 
   for iface_index, iface in ipairs({ ... }) do
     check_arg(iface_index, iface, "table")
@@ -96,6 +111,8 @@ end
 function Object.__call(class, ...)
   check_arg(1, class, "table")
 
+  -- At the moment, these two meta-fields aren't writables
+  set(class, "__index", class)
   set(class, "__newindex", Object.__newindex)
 
   local o = setmt({}, class)
@@ -105,20 +122,22 @@ function Object.__call(class, ...)
 end
 
 -- Getter
--- * May need a revision
 function Object.__index(class, key)
   return get(class, key) or get(Object, key)
 end
 
+-- Setter
 function Object.__newindex(class, key, val)
   local mt = getmt(class)
   local _val = get(class, key) or get(mt, key)
-  print(class, key, val)
 
   if mt == Object then
+    -- From a class
     set(class, key, val)
   else
-    err(_val, "instance")
+    -- From an instance
+    err(_val, "Field '%s' doesn't exists.", key)
+    err(type(_val) ~= "function", "Trying to overwrite method '%s'.", key)
     set(class, key, val)
   end
 end
@@ -134,7 +153,7 @@ return function (g_constructor, g_object)
     if not _G.New then
       _G.New = Object.new
     else
-      print("\n[WARN] Self.lua: `_G` already has field named `New`.\n")
+      print("\n[WARN] Self.lua: `_G` already has a field named `New`.\n")
     end
   end
 
