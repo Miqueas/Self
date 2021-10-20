@@ -24,7 +24,7 @@ p(b)
 p(c)
 p(Person)
 
-c.cock = 2
+c.error = "a"
 p(c)
 p(c == c)
 p(a)
