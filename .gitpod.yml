@@ -1,8 +1,15 @@
 image: gitpod/workspace-base
 
 tasks:
-  - name: Setup Lua
-    command: sudo apt install -y lua5.1
+  - name: Setup workspace
+    command: |
+      sudo apt update
+      sudo apt upgrade -y
+      sudo apt install -y lua5.1
+      curl -L https://github.com/luvit/lit/raw/master/get-lit.sh | sh
+      sudo mv lit   /usr/local/bin
+      sudo mv luvi  /usr/local/bin
+      sudo mv luvit /usr/local/bin
 
 vscode:
   extensions:
