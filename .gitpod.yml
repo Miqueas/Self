@@ -2,7 +2,7 @@ image: gitpod/workspace-base
 
 tasks:
   - name: Setup Lua
-    commands: sudo apt install -y lua5.1
+    command: sudo apt install -y lua5.1
 
 vscode:
   extensions:
