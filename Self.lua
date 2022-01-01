@@ -63,7 +63,7 @@ end
 
 --[[ Public stuff ]]
 
--- Parent class for all classes
+--- Parent class for all classes
 --- @class Object
 local Object = {}
 
@@ -78,7 +78,15 @@ function Class(def)
   return class
 end
 
+--- Return `true` if `instance` is type of `class`,
+--- otherwise returns false
+--- @param instance table
+--- @param class table
+--- @return table|string
 function Object.is(instance, class)
+  check_arg(1, instance, "table")
+  opt_arg(2, class, "table")
+
   local mt = getmt(instance)
   
   if not class then
@@ -88,6 +96,11 @@ function Object.is(instance, class)
   return mt == class or getmt(mt) == Object
 end
 
+--- Implements all functions from one or more classes/tables given.
+--- Can't use this from an instance.
+--- @param class table
+--- @vararg table Tables/classes with functions to import from
+--- @return nil
 function Object.implements(class, ...)
   check_arg(1, class, "table")
 
@@ -108,6 +121,10 @@ function Object.implements(class, ...)
   end
 end
 
+--- Handles how tables are "called"
+--- @param class table
+--- @vararg table Tables/classes with functions to import from
+--- @return table
 function Object.__call(class, ...)
   check_arg(1, class, "table")
 
@@ -121,12 +138,19 @@ function Object.__call(class, ...)
   return o
 end
 
--- Getter
+--- Getter
+--- @param class table
+--- @param key string
+--- @return any
 function Object.__index(class, key)
   return get(class, key) or get(Object, key)
 end
 
--- Setter
+--- Setter
+--- @param class table
+--- @param key string
+--- @param val any
+--- @return nil
 function Object.__newindex(class, key, val)
   local mt = getmt(class)
   local _val = get(class, key) or get(mt, key)
@@ -144,7 +168,10 @@ end
 
 Object.new = Object.__call
 
--- TODO: document about this returned function
+--- Handles what will be returned when "require()" this library.
+--- See the documentation for more details.
+--- @param g_constructor boolean Enable/disable global constructor
+--- @param g_object boolean Enable/disable global `Object`
 return function (g_constructor, g_object)
   opt_arg(1, g_constructor, "boolean")
   opt_arg(2, g_object, "boolean")
@@ -152,8 +179,6 @@ return function (g_constructor, g_object)
   if g_constructor then
     if not _G.New then
       _G.New = Object.new
-    else
-      print("\n[WARN] Self.lua: `_G` already has a field named `New`.\n")
     end
   end
 
