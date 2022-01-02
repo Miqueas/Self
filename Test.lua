@@ -21,10 +21,13 @@ print(a:is())
 print(b:is(Person))
 print(a:is(Object))
 
-p(a)
-p(b)
-p(c)
-p(Person)
+-- Pretty print with Luvit
+if p then
+  p(a)
+  p(b)
+  p(c)
+  p(Person)
+end
 
 a:greet()
 b:greet()
