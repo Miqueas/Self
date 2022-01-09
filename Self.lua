@@ -101,7 +101,8 @@ function Class(def)
 end
 
 --- Return `true` if `instance` is type of `class`,
---- otherwise returns false
+--- otherwise returns false. If `class` is `nil`,
+--- then returns "Object".
 --- @param instance table
 --- @param class table
 --- @return table|string
@@ -110,7 +111,7 @@ function Object.is(instance, class)
   opt_arg(2, class, "table")
 
   local mt = getmt(instance)
-  
+
   if not class then
     return "Object"
   end
