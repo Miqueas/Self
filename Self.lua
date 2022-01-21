@@ -1,7 +1,7 @@
 --[[
   Author: Miqueas Martinez (miqueas2020@yahoo.com)
   Date: 2020/04/30
-  Git Repository: https://github.com/Miqueas/Self
+  Git repository: https://github.com/Miqueas/Self
 
   zlib License
 
