@@ -41,7 +41,7 @@ local set   = rawset
 --- @param exp Expr Expression to evaluate
 --- @param msg string Error message to print
 --- @vararg any Additional arguments to format for `msg`
---- @return any
+--- @return Expr
 local function err(exp, msg, ...)
   local msg = msg:format(...)
 
@@ -58,6 +58,7 @@ end
 --- @param argn number The argument position in function
 --- @param arg_ Any The argument to check
 --- @param expected Type The type expected (`string`)
+--- @return nil
 local function check_arg(argn, arg_, expected)
   local argt = type(arg_)
   local msg = "Bad argument #%d, `%s` expected, got `%s`."
@@ -74,6 +75,7 @@ end
 --- @param argn number The argument position in function
 --- @param arg_ Any The argument to check
 --- @param expected Type The type expected (`string`)
+--- @return nil
 local function opt_arg(argn, arg_, expected)
   local argt = type(arg_)
   local msg = "Bad argument #%d, `%s` or `nil` expected, got `%s`."
@@ -90,7 +92,7 @@ end
 local Object = {}
 
 --- Creates a class
---- @param def table
+--- @param def table Class "template"
 --- @return table
 function Class(def)
   check_arg(1, def, "table")
@@ -103,8 +105,8 @@ end
 --- Return `true` if `instance` is type of `class`,
 --- otherwise returns false. If `class` is `nil`,
 --- then returns "Object".
---- @param instance table
---- @param class table
+--- @param instance table The object
+--- @param class table The class
 --- @return table|string
 function Object.is(instance, class)
   check_arg(1, instance, "table")
@@ -121,8 +123,8 @@ end
 
 --- Implements all functions from one or more classes/tables given.
 --- Can't use this from an instance.
---- @param class table
---- @vararg table Tables/classes with functions to import from
+--- @param class table The class where implement functions
+--- @param ... table Tables/classes with functions to import from
 --- @return nil
 function Object.implements(class, ...)
   check_arg(1, class, "table")
@@ -144,9 +146,9 @@ function Object.implements(class, ...)
   end
 end
 
---- Handles how tables are "called"
---- @param class table
---- @vararg table Tables/classes with functions to import from
+--- Global constructor
+--- @param class table The class to use to create the object
+--- @param ... any Additional arguments to pass to the class constructor
 --- @return table
 function Object.__call(class, ...)
   check_arg(1, class, "table")
@@ -162,17 +164,17 @@ function Object.__call(class, ...)
 end
 
 --- Getter
---- @param class table
---- @param key string
+--- @param class table The object
+--- @param key string The key
 --- @return any
 function Object.__index(class, key)
   return get(class, key) or get(Object, key)
 end
 
 --- Setter
---- @param class table
---- @param key string
---- @param val any
+--- @param class table The object
+--- @param key string The key
+--- @param val any The value
 --- @return nil
 function Object.__newindex(class, key, val)
   local mt = getmt(class)
@@ -195,6 +197,7 @@ Object.new = Object.__call
 --- See the documentation for more details.
 --- @param g_constructor boolean Enable/disable global constructor
 --- @param g_object boolean Enable/disable global `Object`
+--- @return function, Object|nil
 return function (g_constructor, g_object)
   opt_arg(1, g_constructor, "boolean")
   opt_arg(2, g_object, "boolean")
