@@ -103,11 +103,11 @@ function Class(def)
 end
 
 --- Return `true` if `instance` is type of `class`,
---- otherwise returns false. If `class` is `nil`,
+--- otherwise returns `false`. If `class` is `nil`,
 --- then returns "Object".
 --- @param instance table The object
 --- @param class table The class
---- @return table|string
+--- @return boolean|string
 function Object.is(instance, class)
   check_arg(1, instance, "table")
   opt_arg(2, class, "table")
