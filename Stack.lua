@@ -4,9 +4,9 @@
   Git repository: https://github.com/Miqueas/Self
 ]]
 
-local Class = require("Self")()
+local class = require("Self")
 local unp   = unpack or table.unpack
-local Stack = Class {
+local Stack = class {
   reg = { main = {} },
   current = "main",
   stacks = { "main" }

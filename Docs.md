@@ -34,6 +34,16 @@ local fordFiesta = Car("Ford", "Fiesta")
 
 You can either use Luarocks or just download [Self.lua](Self.lua) and put it in your project.
 
+### What about `Stack.lua`?
+
+`Stack.lua` is just a simple implementation of the stack data structure that I made a while ago. Self doesn't require it, but if you like it, you're free to use it. You can `require()` it by like:
+
+```lua
+local stack = require("Self.Stack")
+```
+
+If you installed Self with Luarocks.
+
 ## About inheritance
 
 With the recent changes (since this [commit][commit]) in Self, I have removed the support for inheritance. Instead, I'm trying to use a composition-like focus, so now inheritance is basically the same as implementing a set of functions into a class, keeping all the classes/objects with just one parent: `Object`. I made that because supporting inheritance sometimes is a pain in the ass:
