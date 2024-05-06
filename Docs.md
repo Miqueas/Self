@@ -12,48 +12,27 @@ Self is intended to be simple, fast and easy to use. The difference between Self
 At the moment, there's not much to say about Self:
 
 ```lua
-local Class = require("Self")()
-local Car = Class {
+local class = require("Self")
+local Car = class {
   model = '',
   manufacturer = ''
 }
 
-function Car:new(model, manufacturer)
-  self.model = model
+function Car:new(manufacturer, model)
   self.manufacturer = manufacturer
+  self.model = model
 end
 
 function Car:start(...)
   -- ...
 end
 
-local ford_car = Car("Fiesta", "Ford")
+local fordFiesta = Car("Ford", "Fiesta")
 ```
 
-## Loading Self
+## Installing Self
 
-When you "require()" Self, it returns a function that allows you to enable/disable 2 features:
-
-  - Global `New`
-  - Global `Object`
-
-That returned function accepts two booleans parameters that enable/disable the above features in exactly that order:
-
-```lua
--- Enables `New`
-local Class = require("Self")(true)
--- Enables `New` and `Object` (and returns it)
-local Class2, Object = require("Self")(true, true)
-```
-
-The `New` function allows you to do things like this (following the car example):
-
-```lua
--- ...
-local ford_car = New(Car, "Fiesta", "Ford")
-```
-
-Is just a thing to add a C#/Java-like syntax. In the other side, `Object` is the base class of all classes in Self. At the moment it doesn't have too much interesting things.
+You can either use Luarocks or just download [Self.lua](Self.lua) and put it in your project.
 
 ## About inheritance
 
@@ -68,7 +47,7 @@ Well, it can depend on how is implemented... But still is a pain in the ass.
 So... *"How I can **implement** functions in my class?"*. Well, that's quite simple:
 
 ```lua
-local Class = require("Self")()
+local class = require("Self")
 
 local MyFunctions = {
   a = function()
@@ -94,13 +73,13 @@ MyClass:implements(ClassA, ClassB, ClassC)
 
 And isn't required to pass one by one, the `implements` functions accepts an undefined number of arguments.
 
-## The `Class` function
+## The `class` function
 
 This is the main function to get OOP done with Self, the table that u pass to this function is used like a "template" or "blueprint". By example:
 
 ```lua
-local Class = require("Self")()
-local Person = Class { name = '' }
+local class = require("Self")
+local Person = class { name = "" }
 
 function Person:new(name)
   self.name = name
@@ -117,9 +96,9 @@ local me = Person("Miqueas")
 me.age = 21
 ```
 
-## "Immutability"
+## Object _immutability_
 
-Self objects (class instances) are, in a sense, inmutable. As you saw above, you can only write existing properties in an object. For methods is a bit different: you can overwrite methods from an object. By example (following the above person example):
+Self objects (class instances) are, in a sense, inmutable. As you saw above, you can only write existing properties in an object. For methods is a bit different: you can't overwrite methods from an object. By example (following the above person example):
 
 ```lua
 -- ...
