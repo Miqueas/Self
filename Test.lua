@@ -1,6 +1,6 @@
-local Class, Object = require("Self")(true, true)
-local Person = Class {
-  name = '',
+local class = require("Self")
+local Person = class {
+  name = "",
   age = 0
 }
 
@@ -14,12 +14,11 @@ function Person:greet()
 end
 
 local a = Person("A", 34)
-local b = New(Person, "B", 56)
-local c = Object.new(Person, "C", 86)
+local b = Person("B", 56)
+local c = Person("C", 86)
 
 print(a:is())
 print(b:is(Person))
-print(a:is(Object))
 
 -- Pretty print with Luvit
 if p then

@@ -5,7 +5,7 @@
 
   zlib License
 
-  Copyright (c) 2020 - 2022 Miqueas Martinez
+  Copyright (c) 2020 - 2024 Miqueas Martinez
 
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -89,15 +89,15 @@ end
 
 --- Parent class for all classes
 --- @class Object
-local Object = {}
+local Class = {}
 
 --- Creates a class
 --- @param def table Class "template"
 --- @return table
-function Class(def)
+local function createClass(def)
   check_arg(1, def, "table")
 
-  local class = setmt(def, Object)
+  local class = setmt(def, Class)
 
   return class
 end
@@ -108,7 +108,7 @@ end
 --- @param instance table The object
 --- @param class table The class
 --- @return boolean|string
-function Object.is(instance, class)
+function Class.is(instance, class)
   check_arg(1, instance, "table")
   opt_arg(2, class, "table")
 
@@ -118,7 +118,7 @@ function Object.is(instance, class)
     return "Object"
   end
 
-  return mt == class or getmt(mt) == Object
+  return mt == class or getmt(mt) == Class
 end
 
 --- Implements all functions from one or more classes/tables given.
@@ -126,17 +126,17 @@ end
 --- @param class table The class where implement functions
 --- @param ... table Tables/classes with functions to import from
 --- @return nil
-function Object.implements(class, ...)
+function Class.implements(class, ...)
   check_arg(1, class, "table")
 
   -- Prevent using this method from an instance
   err(
-    getmt(class) == Object,
+    getmt(class) == Class,
     "Trying to call 'implements' method from an instance"
   )
 
-  for iface_index, iface in ipairs({ ... }) do
-    check_arg(iface_index, iface, "table")
+  for index, iface in ipairs({ ... }) do
+    check_arg(index, iface, "table")
 
     for name, func in pairs(iface) do
       if not get(class, name) then
@@ -150,14 +150,16 @@ end
 --- @param class table The class to use to create the object
 --- @param ... any Additional arguments to pass to the class constructor
 --- @return table
-function Object.__call(class, ...)
+function Class.__call(class, ...)
   check_arg(1, class, "table")
 
   -- At the moment, these two meta-fields aren't writables
   set(class, "__index", class)
-  set(class, "__newindex", Object.__newindex)
+  set(class, "__newindex", Class.__newindex)
 
   local o = setmt({}, class)
+
+  err(o.new ~= nil, "This class doesn't have a constructor method")
   o:new(...)
 
   return o
@@ -167,8 +169,8 @@ end
 --- @param class table The object
 --- @param key string The key
 --- @return any
-function Object.__index(class, key)
-  return get(class, key) or get(Object, key)
+function Class.__index(class, key)
+  return get(class, key) or get(Class, key)
 end
 
 --- Setter
@@ -176,41 +178,19 @@ end
 --- @param key string The key
 --- @param val any The value
 --- @return nil
-function Object.__newindex(class, key, val)
+function Class.__newindex(class, key, val)
   local mt = getmt(class)
   local _val = get(class, key) or get(mt, key)
 
-  if mt == Object then
+  if mt == Class then
     -- From a class
     set(class, key, val)
   else
     -- From an instance
-    err(_val, "Field '%s' doesn't exists.", key)
+    err(_val ~= nil, "Field '%s' doesn't exists.", key)
     err(type(_val) ~= "function", "Trying to overwrite method '%s'.", key)
     set(class, key, val)
   end
 end
 
-Object.new = Object.__call
-
---- Handles what will be returned when "require()" this library.
---- See the documentation for more details.
---- @param g_constructor boolean Enable/disable global constructor
---- @param g_object boolean Enable/disable global `Object`
---- @return function, Object|nil
-return function (g_constructor, g_object)
-  opt_arg(1, g_constructor, "boolean")
-  opt_arg(2, g_object, "boolean")
-
-  if g_constructor then
-    if not _G.New then
-      _G.New = Object.new
-    end
-  end
-
-  if g_object then
-    return Class, Object
-  end
-
-  return Class
-end
+return createClass
