@@ -9,8 +9,8 @@ A small and simple library for OOP in Lua.
 Here's a simple example:
 
 ```lua
-local Class = require("Self")()
-local Point = Class {
+local class = require("Self")
+local Point = class {
   x = 0,
   y = 0
 }
